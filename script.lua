@@ -2,8 +2,8 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
 Name = "Murder Mystery 2",
-LoadingTitle = "MM2 Target Hub",
-LoadingSubtitle = "Desenvolvido por Gemini",
+LoadingTitle = "Carregando script",
+LoadingSubtitle = "Feito por zxred",
 ConfigurationSaving = {Enabled = false}
 })
 
@@ -19,12 +19,10 @@ local AimbotEnabled = false
 local TargetType = "Murderer"
 local FovVisible = false
 local FovSize = 100
-local MaxAimbotDistance = 1000 -- Distância máxima para o Aimbot
 
 -- Variáveis de Controle (ESP)
 local EspEnabled = false
 local GunEspEnabled = false
-local MaxEspDistance = 1000 -- Distância máxima para o ESP
 
 -- Variável para lembrar se o modo leve está ativo
 local LowGraphicsEnabled = false
@@ -95,11 +93,7 @@ local shortestDistance = FovSize
 local screenCenter = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
 
 for _, p in pairs(Players:GetPlayers()) do
-if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("Head") and p.Character:FindFirstChild("HumanoidRootPart") and p.Character:FindFirstChild("Humanoid") and p.Character.Humanoid.Health > 0 then
--- Verifica a distância real em metros (studs) antes de mirar
-local distanceInStuds = (LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")) and (LocalPlayer.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).Magnitude or 0
-
-if distanceInStuds <= MaxAimbotDistance then
+if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("Head") and p.Character:FindFirstChild("Humanoid") and p.Character.Humanoid.Health > 0 then
 local role = GetPlayerRole(p)
 if role == TargetType then
 local pos, onScreen = Camera:WorldToViewportPoint(p.Character.Head.Position)
@@ -108,7 +102,6 @@ local distance = (Vector2.new(pos.X, pos.Y) - screenCenter).Magnitude
 if distance < shortestDistance then
 closestPlayer = p.Character.Head
 shortestDistance = distance
-end
 end
 end
 end
@@ -190,60 +183,53 @@ if p ~= LocalPlayer then
 local char = p.Character
 
 if EspEnabled and char and char:FindFirstChild("Head") and char:FindFirstChild("HumanoidRootPart") and char:FindFirstChild("Humanoid") and char.Humanoid.Health > 0 then    
-        local distanceInStuds = (LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")) and (LocalPlayer.Character.HumanoidRootPart.Position - char.HumanoidRootPart.Position).Magnitude or 0
-        
-        -- Verifica se o jogador está dentro do limite de 1000 metros
-        if distanceInStuds <= MaxEspDistance then
-            local role = GetPlayerRole(p)    
-                
-            local teamColor = Color3.fromRGB(0, 255, 0) -- Verde (Innocent)    
-            if role == "Murderer" then     
-                teamColor = Color3.fromRGB(255, 0, 0) -- Vermelho    
-            elseif role == "Sheriff" then     
-                teamColor = Color3.fromRGB(0, 0, 255) -- Azul    
-            end    
+        local role = GetPlayerRole(p)    
+            
+        local teamColor = Color3.fromRGB(0, 255, 0) -- Verde (Innocent)    
+        if role == "Murderer" then     
+            teamColor = Color3.fromRGB(255, 0, 0) -- Vermelho    
+        elseif role == "Sheriff" then     
+            teamColor = Color3.fromRGB(0, 0, 255) -- Azul    
+        end    
 
-            local highlight = char:FindFirstChild("ESP_Highlight")    
-            if not highlight then    
-                highlight = Instance.new("Highlight")    
-                highlight.Name = "ESP_Highlight"    
-                highlight.Parent = char    
-            end    
-            highlight.FillTransparency = 1     
-            highlight.OutlineColor = teamColor     
-            highlight.OutlineTransparency = 0    
-            highlight.Enabled = true    
+        local highlight = char:FindFirstChild("ESP_Highlight")    
+        if not highlight then    
+            highlight = Instance.new("Highlight")    
+            highlight.Name = "ESP_Highlight"    
+            highlight.Parent = char    
+        end    
+        highlight.FillTransparency = 1     
+        highlight.OutlineColor = teamColor     
+        highlight.OutlineTransparency = 0    
+        highlight.Enabled = true    
 
-            local gui = char:FindFirstChild("ESP_Gui")    
-            if not gui then    
-                gui = Instance.new("BillboardGui")    
-                gui.Name = "ESP_Gui"    
-                gui.AlwaysOnTop = true    
-                gui.Size = UDim2.new(0, 200, 0, 60)    
-                gui.ExtentsOffset = Vector3.new(0, 3, 0)    
-                gui.Parent = char    
-            end    
-            gui.Adornee = char.Head    
+        local gui = char:FindFirstChild("ESP_Gui")    
+        if not gui then    
+            gui = Instance.new("BillboardGui")    
+            gui.Name = "ESP_Gui"    
+            gui.AlwaysOnTop = true    
+            gui.Size = UDim2.new(0, 200, 0, 60)    
+            gui.ExtentsOffset = Vector3.new(0, 3, 0)    
+            gui.Parent = char    
+        end    
+        gui.Adornee = char.Head    
 
-            local label = gui:FindFirstChild("TextLabel")    
-            if not label then    
-                label = Instance.new("TextLabel")    
-                label.BackgroundTransparency = 1    
-                label.Size = UDim2.new(1, 0, 1, 0)    
-                label.Font = Enum.Font.SourceSansBold    
-                label.TextSize = 14    
-                label.TextStrokeTransparency = 1    
-                label.Parent = gui    
-            end    
-            label.TextColor3 = teamColor    
-                
-            local distanceCalculated = math.floor(distanceInStuds)    
-            label.Text = p.Name .. "\n" .. role .. "\n" .. tostring(distanceCalculated) .. " m"    
-        else
-            -- Se estiver fora da distância máxima, remove o ESP temporariamente
-            if char:FindFirstChild("ESP_Highlight") then char.ESP_Highlight:Destroy() end    
-            if char:FindFirstChild("ESP_Gui") then char.ESP_Gui:Destroy() end    
-        end
+        local label = gui:FindFirstChild("TextLabel")    
+        if not label then    
+            label = Instance.new("TextLabel")    
+            label.BackgroundTransparency = 1    
+            label.Size = UDim2.new(1, 0, 1, 0)    
+            label.Font = Enum.Font.SourceSansBold    
+            label.TextSize = 14    
+            label.TextStrokeTransparency = 1 -- Mudado para 1 (Sem borda)    
+            label.Parent = gui    
+        end    
+        label.TextColor3 = teamColor    
+            
+        local distanceInStuds = (LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")) and (LocalPlayer.Character.HumanoidRootPart.Position - char.HumanoidRootPart.Position).Magnitude or 0    
+        local distanceCalculated = math.floor(distanceInStuds)    
+
+        label.Text = p.Name .. "\n" .. role .. "\n" .. tostring(distanceCalculated) .. " m"    
     else    
         if char then    
             if char:FindFirstChild("ESP_Highlight") then char.ESP_Highlight:Destroy() end    
@@ -260,43 +246,35 @@ if gunDrop and GunEspEnabled then
 local targetPart = gunDrop:IsA("BasePart") and gunDrop or gunDrop:FindFirstChildWhichIsA("BasePart")
 
 if targetPart then    
-    local distanceInStuds = (LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")) and (LocalPlayer.Character.HumanoidRootPart.Position - targetPart.Position).Magnitude or 0
-    
-    -- Verifica se a arma está dentro do limite de 1000 metros
-    if distanceInStuds <= MaxEspDistance then
-        local gunHighlight = gunDrop:FindFirstChild("Gun_Highlight") or Instance.new("Highlight", gunDrop)    
-        gunHighlight.Name = "Gun_Highlight"    
-        gunHighlight.FillColor = Color3.fromRGB(255, 255, 0)    
-        gunHighlight.OutlineColor = Color3.fromRGB(255, 255, 255)    
-        gunHighlight.FillTransparency = 0.5    
-        gunHighlight.OutlineTransparency = 0    
-        gunHighlight.Enabled = true    
+    local gunHighlight = gunDrop:FindFirstChild("Gun_Highlight") or Instance.new("Highlight", gunDrop)    
+    gunHighlight.Name = "Gun_Highlight"    
+    gunHighlight.FillColor = Color3.fromRGB(255, 255, 0)    
+    gunHighlight.OutlineColor = Color3.fromRGB(255, 255, 255)    
+    gunHighlight.FillTransparency = 0.5    
+    gunHighlight.OutlineTransparency = 0    
+    gunHighlight.Enabled = true    
 
-        local gunGui = gunDrop:FindFirstChild("Gun_Gui") or Instance.new("BillboardGui", gunDrop)    
-        gunGui.Name = "Gun_Gui"    
-        gunGui.AlwaysOnTop = true    
-        gunGui.Size = UDim2.new(0, 200, 0, 40)    
-        gunGui.Adornee = targetPart    
-        gunGui.ExtentsOffset = Vector3.new(0, 2, 0)    
+    local gunGui = gunDrop:FindFirstChild("Gun_Gui") or Instance.new("BillboardGui", gunDrop)    
+    gunGui.Name = "Gun_Gui"    
+    gunGui.AlwaysOnTop = true    
+    gunGui.Size = UDim2.new(0, 200, 0, 40)    
+    gunGui.Adornee = targetPart    
+    gunGui.ExtentsOffset = Vector3.new(0, 2, 0)    
 
-        local gunLabel = gunGui:FindFirstChild("TextLabel") or Instance.new("TextLabel", gunGui)    
-        gunLabel.BackgroundTransparency = 1    
-        gunLabel.Size = UDim2.new(1, 0, 1, 0)    
-        gunLabel.Font = Enum.Font.SourceSansBold    
-        gunLabel.TextSize = 16    
-        gunLabel.TextColor3 = Color3.fromRGB(255, 255, 0)    
-        gunLabel.TextStrokeTransparency = 1 
-            
-        local distanceCalculated = math.floor(distanceInStuds)    
-            
-        gunLabel.Text = "Arma Dropada\n" .. tostring(distanceCalculated) .. " m"    
-        gunLabel.Parent = gunGui    
-        gunGui.Parent = gunDrop    
-    else
-        -- Se a arma estiver longe, limpa o ESP dela
-        if gunDrop:FindFirstChild("Gun_Highlight") then gunDrop.Gun_Highlight:Destroy() end
-        if gunDrop:FindFirstChild("Gun_Gui") then gunDrop.Gun_Gui:Destroy() end
-    end
+    local gunLabel = gunGui:FindFirstChild("TextLabel") or Instance.new("TextLabel", gunGui)    
+    gunLabel.BackgroundTransparency = 1    
+    gunLabel.Size = UDim2.new(1, 0, 1, 0)    
+    gunLabel.Font = Enum.Font.SourceSansBold    
+    gunLabel.TextSize = 16    
+    gunLabel.TextColor3 = Color3.fromRGB(255, 255, 0)    
+    gunLabel.TextStrokeTransparency = 1 -- Mudado para 1 (Sem borda)    
+        
+    local distanceInStuds = (LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")) and (LocalPlayer.Character.HumanoidRootPart.Position - targetPart.Position).Magnitude or 0    
+    local distanceCalculated = math.floor(distanceInStuds)    
+        
+    gunLabel.Text = "Arma Dropada\n" .. tostring(distanceCalculated) .. " m"    
+    gunLabel.Parent = gunGui    
+    gunGui.Parent = gunDrop    
 end
 
 else
@@ -340,7 +318,7 @@ Callback = function(Option) TargetType = Option[1] end,
 })
 
 AimbotTab:CreateToggle({
-Name = "Ativar Círculo FOV",
+Name = "Ativar  FOV",
 CurrentValue = false,
 Callback = function(Value) FovVisible = Value end,
 })
@@ -355,13 +333,13 @@ Callback = function(Value) FovSize = Value end,
 
 -- Configurações da Aba ESP
 EspTab:CreateToggle({
-Name = "Ativar ESP Jogadores (Contorno)",
+Name = "Ativar ESP Jogadores",
 CurrentValue = false,
 Callback = function(Value) EspEnabled = Value end,
 })
 
 EspTab:CreateToggle({
-Name = "Ativar ESP Arma Dropada",
+Name = "Ativar ESP Arma",
 CurrentValue = false,
 Callback = function(Value) GunEspEnabled = Value end,
 })
@@ -374,7 +352,7 @@ local target = GetPlayerByRole("Murderer")
 if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
 TeleportToCFrame(target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0))
 else
-Rayfield:Notify({Name = "Erro", Content = "Murderer não encontrado ou sem personagem.", Duration = 3})
+Rayfield:Notify({Name = "Erro", Content = "Murderer não encontrado ou sem personagem.", Duration = 2})
 end
 end,
 })
@@ -386,7 +364,7 @@ local target = GetPlayerByRole("Sheriff")
 if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
 TeleportToCFrame(target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0))
 else
-Rayfield:Notify({Name = "Erro", Content = "Sheriff não encontrado ou sem personagem.", Duration = 3})
+Rayfield:Notify({Name = "Erro", Content = "Sheriff não encontrado ou sem personagem.", Duration = 2})
 end
 end,
 })
@@ -402,17 +380,17 @@ end,
 })
 
 TeleportTab:CreateButton({
-Name = "Teleportar para o Jogador Selecionado",
+Name = "Teleportar para o Jogador",
 Callback = function()
 if SelectedPlayerToTp ~= "" then
 local target = Players:FindFirstChild(SelectedPlayerToTp)
 if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
 TeleportToCFrame(target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0))
 else
-Rayfield:Notify({Name = "Erro", Content = "Jogador indisponível ou sem personagem.", Duration = 3})
+Rayfield:Notify({Name = "Erro", Content = "Jogador indisponível ou sem personagem.", Duration = 2})
 end
 else
-Rayfield:Notify({Name = "Aviso", Content = "Selecione um jogador na lista acima primeiro.", Duration = 3})
+Rayfield:Notify({Name = "Aviso", Content = "Selecione um jogador na lista acima primeiro.", Duration = 2})
 end
 end,
 })
@@ -435,7 +413,7 @@ if targetPart then
 TeleportToCFrame(targetPart.CFrame * CFrame.new(0, 2, 0))
 end
 else
-Rayfield:Notify({Name = "Aviso", Content = "Nenhuma arma dropada encontrada no mapa atual.", Duration = 3})
+Rayfield:Notify({Name = "Aviso", Content = "Nenhuma arma dropada encontrada no mapa atual.", Duration = 2})
 end
 end,
 })
@@ -460,7 +438,7 @@ return
 end
 
 TeleportToCFrame(CFrame.new(-108, 145, 12))
-Rayfield:Notify({Name = "Aviso", Content = "Spawn oficial não encontrado, usando coordenada aproximada.", Duration = 3})
+Rayfield:Notify({Name = "Aviso", Content = "Spawn oficial não encontrado, usando coordenada aproximada.", Duration = 2})
 
 end,
 })
@@ -468,24 +446,30 @@ end,
 TeleportTab:CreateButton({
 Name = "Teleportar para a Arena de Jogo",
 Callback = function()
+-- 1. Varre estritamente as pastas de mapas ativos geradas pelo MM2
 local activeMapFolder = workspace:FindFirstChild("NormalMaps") or workspace:FindFirstChild("Map")
 
 if activeMapFolder then
 for _, mapModel in ipairs(activeMapFolder:GetChildren()) do
+-- Ignora completamente o Lobby caso ele esteja misturado na pasta
 if mapModel.Name ~= "Lobby" and mapModel.Name ~= "LobbyWorkspace" then
 
+-- Busca a pasta interna de Spawns físicos do mapa selecionado    
            local spawns = mapModel:FindFirstChild("Spawns") or mapModel:FindFirstChild("PlayerSpawns") or mapModel:FindFirstChild("SpawnPoints")    
                
            if spawns and #spawns:GetChildren() > 0 then    
+               -- Escolhe um bloco de spawn físico aleatório da arena    
                local spawnPointsList = spawns:GetChildren()    
                local randomSpawn = spawnPointsList[math.random(1, #spawnPointsList)]    
                    
                if randomSpawn:IsA("BasePart") then    
+                   -- Teleporta para as coordenadas do Spawn zerando rotação + altura segura (limpa e fica de pé)    
                    TeleportToCFrame(CFrame.new(randomSpawn.Position + Vector3.new(0, 3, 0)))    
                    return    
                end    
            end    
                
+           -- Fallback 1: Caso a pasta Spawns esteja oculta, pega a parte física do chão (Floor) da arena    
            local floor = mapModel:FindFirstChild("Floor") or mapModel:FindFirstChild("Geometry") or mapModel:FindFirstChildWhichIsA("BasePart", true)    
            if floor then    
                TeleportToCFrame(CFrame.new(floor.Position + Vector3.new(0, 6, 0)))    
@@ -496,6 +480,7 @@ if mapModel.Name ~= "Lobby" and mapModel.Name ~= "LobbyWorkspace" then
 
 end
 
+-- Fallback 2: Caso as estruturas padrão falhem, localiza a arena pela presença de moedas coletáveis (Exclusivas da rodada)
 for _, obj in ipairs(workspace:GetChildren()) do
 if obj:IsA("Model") and obj.Name ~= "Lobby" and obj.Name ~= "LobbyWorkspace" then
 if obj:FindFirstChild("CoinContainer") then
@@ -511,55 +496,25 @@ end
 end
 end
 
-Rayfield:Notify({Name = "Aviso", Content = "Não foi possível isolar os spawns da arena. A partida iniciou?", Duration = 3})
+Rayfield:Notify({Name = "Aviso", Content = "Não foi possível teleportar agora, aguarde a partida começar", Duration = 2})
 
-end,
-})
-
--- FUNÇÃO NOVA: TELEPORTE PARA SAFE ZONE (Cria uma área segura de 20 metros a 10.000 metros do lobby)
-TeleportTab:CreateButton({
-Name = "Teleportar para Safe Zone",
-Callback = function()
-local safeZoneName = "MM2_SafeZone_Platform"
-local platform = workspace:FindFirstChild(safeZoneName)
-
--- Se a plataforma não existir, cria uma nova
-if not platform then
-    -- Tenta pegar a posição do lobby para usar como referência de base horizontal
-    local basePosition = Vector3.new(-108, 145, 12)
-    local lobby = workspace:FindFirstChild("Lobby") or workspace:FindFirstChild("LobbyWorkspace")
-    if lobby then
-        local spawnLocation = lobby:FindFirstChildWhichIsA("SpawnLocation", true) or lobby:FindFirstChildWhichIsA("BasePart", true)
-        if spawnLocation then
-            basePosition = spawnLocation.Position
-        end
-    end
-
-    -- Define a posição da Safe Zone a 10.000 metros acima do lobby
-    local targetPosition = Vector3.new(basePosition.X, basePosition.Y + 10000, basePosition.Z)
-
-    platform = Instance.new("Part")
-    platform.Name = safeZoneName
-    platform.Size = Vector3.new(20, 1, 20) -- Tamanho exato de 20x20 metros
-    platform.Position = targetPosition
-    platform.Anchored = true
-    platform.Material = Enum.Material.ForceField -- Visual neon futurista (ou use SmoothPlastic)
-    platform.Color = Color3.fromRGB(0, 255, 255)  -- Cor ciano/azul claro
-    platform.Transparency = 0.5 -- Semi-transparente
-    platform.CastShadow = false
-    platform.Parent = workspace
-end
-
--- Teleporta o jogador de forma segura para o centro da mini área (+2 studs para não clipar na plataforma)
-TeleportToCFrame(CFrame.new(platform.Position + Vector3.new(0, 2, 0)))
-Rayfield:Notify({Name = "Safe Zone", Content = "Teleportado para a área segura a 10.000m do lobby!", Duration = 3})
 end,
 })
 
 -- Configurações da Aba Desempenho
 PerformanceTab:CreateToggle({
-Name = "Modo Leve Automático (Boost FPS)",
+Name = "Modo Leve",
 CurrentValue = false,
 Callback = function(Value)
 LowGraphicsEnabled = Value
-if LowG
+if LowGraphicsEnabled then
+OptimizeTextures()
+Rayfield:Notify({
+Name = "Modo Leve Ativado",
+Content = "Texturas removidas! Novos mapas serão otimizados automaticamente.",
+Duration = 2,
+Image = 4483362458,
+})
+end
+end,
+})
